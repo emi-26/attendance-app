@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\AdminAuthController;
 use Illuminate\Support\Facades\Route;
+use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,3 +18,17 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::middleware('guest')->group(function () {
+    Route::get('/admin/login', [AdminAuthController::class, 'showLoginForm']);
+
+    Route::post('/admin/login', [
+        AuthenticatedSessionController::class,
+        'store',
+    ]);
+});
+
+Route::post('/admin/logout', [
+    AuthenticatedSessionController::class,
+    'destroy',
+])->middleware('auth');
