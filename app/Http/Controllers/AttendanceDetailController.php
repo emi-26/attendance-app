@@ -16,6 +16,11 @@ class AttendanceDetailController extends Controller
         Request $request,
         AttendanceRecord $attendanceRecord
     ): View {
+        if ($request->user()->admin_status) {
+            return app(AdminAttendanceController::class)
+                ->show($attendanceRecord);
+        }
+
         $this->authorizeRecord($request, $attendanceRecord);
 
         $attendanceRecord->load('breaks');
@@ -73,6 +78,11 @@ class AttendanceDetailController extends Controller
         AttendanceCorrectionRequest $request,
         AttendanceRecord $attendanceRecord
     ): RedirectResponse {
+        if ($request->user()->admin_status) {
+            return app(AdminAttendanceController::class)
+                ->update($request, $attendanceRecord);
+        }
+
         $this->authorizeRecord($request, $attendanceRecord);
 
         $hasPendingApplication = $attendanceRecord->applications()

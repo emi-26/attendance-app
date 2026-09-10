@@ -12,7 +12,14 @@ class StampCorrectionRequestController extends Controller
 {
     public function index(Request $request): View
     {
-        $applications = $request->user()
+        $user = $request->user();
+
+        if ($user->admin_status === true) {
+            return app(AdminStampCorrectionRequestController::class)
+                ->index();
+        }
+
+        $applications = $user
             ->applications()
             ->with('attendanceRecord')
             ->latest()
@@ -36,7 +43,7 @@ class StampCorrectionRequestController extends Controller
             });
 
         return view('user.user-application-list', [
-            'user' => $request->user(),
+            'user' => $user,
             'formattedApplications' => $formattedApplications,
         ]);
     }

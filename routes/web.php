@@ -1,23 +1,15 @@
 <?php
 
+use App\Http\Controllers\AdminAttendanceController;
 use App\Http\Controllers\AdminAuthController;
+use App\Http\Controllers\AdminStaffController;
+use App\Http\Controllers\AdminStampCorrectionRequestController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceDetailController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\StampCorrectionRequestController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
-
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
 
 Route::get('/', function () {
     return view('welcome');
@@ -63,6 +55,47 @@ Route::middleware('auth')->group(function () {
         StampCorrectionRequestController::class,
         'show',
     ]);
+
+    Route::get('/admin/attendance/list', [
+        AdminAttendanceController::class,
+        'index',
+    ]);
+
+    Route::get('/admin/attendance/{attendanceRecord}', [
+        AdminAttendanceController::class,
+        'show',
+    ]);
+
+    Route::post('/admin/attendance/{attendanceRecord}', [
+        AdminAttendanceController::class,
+        'update',
+    ]);
+
+    Route::get('/admin/staff/list', [
+        AdminStaffController::class,
+        'index',
+    ]);
+
+    Route::get('/admin/attendance/staff/{user}', [
+        AdminStaffController::class,
+        'show',
+    ]);
+
+    Route::get(
+        '/stamp_correction_request/approve/{application}',
+        [
+            AdminStampCorrectionRequestController::class,
+            'show',
+        ]
+    );
+
+    Route::post(
+        '/stamp_correction_request/approve/{application}',
+        [
+            AdminStampCorrectionRequestController::class,
+            'approve',
+        ]
+    );
 });
 
 Route::middleware('guest')->group(function () {
