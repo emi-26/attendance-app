@@ -6,6 +6,7 @@ use App\Http\Controllers\AdminStaffController;
 use App\Http\Controllers\AdminStampCorrectionRequestController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceDetailController;
+use App\Http\Controllers\AttendanceExportController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\StampCorrectionRequestController;
 use Illuminate\Http\Request;
@@ -16,14 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-/*
-|--------------------------------------------------------------------------
-| 一般ユーザー用ルート
-|--------------------------------------------------------------------------
-|
-| ログイン済み、かつメール認証済みの一般ユーザーだけ利用できます。
-|
-*/
 Route::middleware([
     'auth',
     'verified',
@@ -64,15 +57,6 @@ Route::middleware([
     ]);
 });
 
-/*
-|--------------------------------------------------------------------------
-| 一般・管理者共通の勤怠詳細振り分け
-|--------------------------------------------------------------------------
-|
-| ログインしているユーザーが管理者なら管理者用詳細へ、
-| 一般ユーザーなら一般ユーザー用詳細へ移動します。
-|
-*/
 Route::middleware('auth')->get(
     '/attendance/{attendanceRecord}',
     function (
@@ -91,11 +75,6 @@ Route::middleware('auth')->get(
     }
 );
 
-/*
-|--------------------------------------------------------------------------
-| 管理者用ルート
-|--------------------------------------------------------------------------
-*/
 Route::middleware([
     'auth',
     'admin',
@@ -125,6 +104,11 @@ Route::middleware([
         'show',
     ]);
 
+    Route::post('/export', [
+        AttendanceExportController::class,
+        'export',
+    ]);
+
     Route::get(
         '/stamp_correction_request/approve/{application}',
         [
@@ -142,11 +126,6 @@ Route::middleware([
     );
 });
 
-/*
-|--------------------------------------------------------------------------
-| 管理者認証
-|--------------------------------------------------------------------------
-*/
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [
         AdminAuthController::class,
