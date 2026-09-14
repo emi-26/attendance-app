@@ -16,7 +16,18 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::middleware('auth')->group(function () {
+/*
+|--------------------------------------------------------------------------
+| 一般ユーザー用ルート
+|--------------------------------------------------------------------------
+|
+| ログイン済み、かつメール認証済みの一般ユーザーだけ利用できます。
+|
+*/
+Route::middleware([
+    'auth',
+    'verified',
+])->group(function () {
     Route::get('/attendance', [
         AttendanceController::class,
         'index',
@@ -37,24 +48,6 @@ Route::middleware('auth')->group(function () {
         'show',
     ]);
 
-    Route::get(
-        '/attendance/{attendanceRecord}',
-        function (
-            Request $request,
-            int $attendanceRecord
-        ) {
-            if ($request->user()->admin_status) {
-                return redirect(
-                    '/admin/attendance/'.$attendanceRecord
-                );
-            }
-
-            return redirect(
-                '/attendance/detail/'.$attendanceRecord
-            );
-        }
-    );
-
     Route::post('/attendance/{attendanceRecord}', [
         AttendanceDetailController::class,
         'store',
@@ -71,6 +64,38 @@ Route::middleware('auth')->group(function () {
     ]);
 });
 
+/*
+|--------------------------------------------------------------------------
+| 一般・管理者共通の勤怠詳細振り分け
+|--------------------------------------------------------------------------
+|
+| ログインしているユーザーが管理者なら管理者用詳細へ、
+| 一般ユーザーなら一般ユーザー用詳細へ移動します。
+|
+*/
+Route::middleware('auth')->get(
+    '/attendance/{attendanceRecord}',
+    function (
+        Request $request,
+        int $attendanceRecord
+    ) {
+        if ($request->user()->admin_status) {
+            return redirect(
+                '/admin/attendance/'.$attendanceRecord
+            );
+        }
+
+        return redirect(
+            '/attendance/detail/'.$attendanceRecord
+        );
+    }
+);
+
+/*
+|--------------------------------------------------------------------------
+| 管理者用ルート
+|--------------------------------------------------------------------------
+*/
 Route::middleware([
     'auth',
     'admin',
@@ -117,6 +142,11 @@ Route::middleware([
     );
 });
 
+/*
+|--------------------------------------------------------------------------
+| 管理者認証
+|--------------------------------------------------------------------------
+*/
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [
         AdminAuthController::class,
