@@ -225,4 +225,34 @@ class AuthTest extends TestCase
             'email' => 'ログイン情報が登録されていません',
         ]);
     }
+
+    /**
+     * 一般ユーザーは管理者画面にアクセスできない
+     */
+    public function test_general_user_cannot_access_admin_page(): void
+    {
+        $user = User::factory()->create([
+            'admin_status' => false,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get('/admin/attendance/list');
+
+        $response->assertStatus(403);
+    }
+
+    /**
+     * 管理者は管理者画面にアクセスできる
+     */
+    public function test_admin_can_access_admin_page(): void
+    {
+        $admin = User::factory()->create([
+            'admin_status' => true,
+        ]);
+
+        $response = $this->actingAs($admin)
+            ->get('/admin/attendance/list');
+
+        $response->assertStatus(200);
+    }
 }

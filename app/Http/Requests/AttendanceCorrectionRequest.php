@@ -55,9 +55,13 @@ class AttendanceCorrectionRequest extends FormRequest
                 );
 
                 if ($clockIn->gt($clockOut)) {
+                    $message = $this->user()->admin_status
+                        ? '出勤時間もしくは退勤時間が不適切な値です'
+                        : '出勤時間が不適切な値です';
+
                     $validator->errors()->add(
                         'new_clock_in',
-                        '出勤時間もしくは退勤時間が不適切な値です'
+                        $message
                     );
 
                     return;

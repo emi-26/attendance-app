@@ -8,6 +8,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceDetailController;
 use App\Http\Controllers\AttendanceListController;
 use App\Http\Controllers\StampCorrectionRequestController;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
@@ -36,10 +37,23 @@ Route::middleware('auth')->group(function () {
         'show',
     ]);
 
-    Route::get('/attendance/{attendanceRecord}', [
-        AttendanceDetailController::class,
-        'show',
-    ]);
+    Route::get(
+        '/attendance/{attendanceRecord}',
+        function (
+            Request $request,
+            int $attendanceRecord
+        ) {
+            if ($request->user()->admin_status) {
+                return redirect(
+                    '/admin/attendance/'.$attendanceRecord
+                );
+            }
+
+            return redirect(
+                '/attendance/detail/'.$attendanceRecord
+            );
+        }
+    );
 
     Route::post('/attendance/{attendanceRecord}', [
         AttendanceDetailController::class,
@@ -55,7 +69,12 @@ Route::middleware('auth')->group(function () {
         StampCorrectionRequestController::class,
         'show',
     ]);
+});
 
+Route::middleware([
+    'auth',
+    'admin',
+])->group(function () {
     Route::get('/admin/attendance/list', [
         AdminAttendanceController::class,
         'index',
@@ -113,4 +132,7 @@ Route::middleware('guest')->group(function () {
 Route::post('/admin/logout', [
     AuthenticatedSessionController::class,
     'destroy',
-])->middleware('auth');
+])->middleware([
+    'auth',
+    'admin',
+]);
