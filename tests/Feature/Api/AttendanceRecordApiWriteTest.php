@@ -84,7 +84,10 @@ class AttendanceRecordApiWriteTest extends TestCase
             ]
         );
 
-        $response->assertStatus(403);
+        $response->assertStatus(403)
+            ->assertJson([
+                'error' => 'この操作を実行する権限がありません。',
+            ]);
     }
 
     public function test_admin_can_update_other_users_record(): void
@@ -140,7 +143,10 @@ class AttendanceRecordApiWriteTest extends TestCase
             '/api/v1/attendance-records/'.$record->id
         );
 
-        $response->assertStatus(403);
+        $response->assertStatus(403)
+            ->assertJson([
+                'error' => 'この操作を実行する権限がありません。',
+            ]);
     }
 
     private function createRecord(User $user): AttendanceRecord

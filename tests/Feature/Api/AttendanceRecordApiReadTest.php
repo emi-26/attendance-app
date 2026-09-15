@@ -56,6 +56,18 @@ class AttendanceRecordApiReadTest extends TestCase
             );
     }
 
+    public function test_missing_attendance_record_returns_expected_error(): void
+    {
+        $response = $this->getJson(
+            '/api/v1/attendance-records/999999'
+        );
+
+        $response->assertStatus(404)
+            ->assertJson([
+                'error' => '勤怠情報が見つかりませんでした。',
+            ]);
+    }
+
     public function test_attendance_records_can_be_filtered_by_user(): void
     {
         $firstUser = User::factory()->create();
