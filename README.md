@@ -1,15 +1,32 @@
-cat > README.md <<'EOF'
 # coachtech 勤怠管理アプリ
 
-ユーザーの出勤・退勤・休憩の打刻、勤怠確認、修正申請と、
-管理者による勤怠管理・修正申請の承認を行う勤怠管理アプリです。
+ユーザーの出勤・退勤・休憩の打刻、勤怠確認、修正申請と、管理者による勤怠管理・修正申請の承認を行う勤怠管理アプリです。
+
+## 主な機能
+
+- 会員登録・ログイン・ログアウト
+- メールアドレス認証
+- 出勤・休憩開始・休憩終了・退勤
+- 月別勤怠一覧
+- 勤怠詳細表示
+- 勤怠修正申請
+- 修正申請一覧
+- 管理者による日別勤怠管理
+- 管理者によるスタッフ別勤怠管理
+- 管理者による勤怠直接修正
+- 管理者による修正申請承認
+- 勤怠CSV出力
+- 勤怠レポート
+- 勤怠情報API
+- Laravel SanctumによるAPI認証
+- PolicyによるAPI権限制御
 
 ## 環境構築
 
 ### 1. リポジトリをクローン
 
 ~~~bash
-git clone <リポジトリURL>
+git clone https://github.com/emi-26/attendance-app.git
 cd attendance-app
 ~~~
 
@@ -79,94 +96,55 @@ MAIL_PORT=1025
 ## ログイン情報
 
 ### 一般ユーザー1
-
 - メールアドレス：user1@example.com
 - パスワード：password
 
 ### 一般ユーザー2
-
 - メールアドレス：user2@example.com
 - パスワード：password
 
 ### 管理者
-
 - メールアドレス：user3@example.com
 - パスワード：password
 
 ## 使用技術
 
-- PHP 8.2
-- Laravel 10.x
+- PHP 8.2.33
+- Laravel 10.50.3
 - Laravel Fortify
+- Laravel Sanctum
 - Laravel Sail
-- MySQL 8.4
+- MySQL 8.4.11
 - phpMyAdmin
 - Mailpit
 - Vite
+- PHPUnit
+- Laravel Pint
 
 ## ER図
 
-~~~mermaid
-erDiagram
-    users ||--o{ attendance_records : has
-    users ||--o{ applications : submits
-    attendance_records ||--o{ breaks : has
-    attendance_records ||--o{ applications : has
-    applications ||--o{ application_breaks : has
+![ER図](public/images/er-diagram.png)
 
-    users {
-        bigint id PK
-        string name
-        string email
-        timestamp email_verified_at
-        string password
-        boolean admin_status
-        string remember_token
-        timestamp created_at
-        timestamp updated_at
-    }
+## API
 
-    attendance_records {
-        bigint id PK
-        bigint user_id FK
-        date date
-        time clock_in
-        time clock_out
-        string comment
-        timestamp created_at
-        timestamp updated_at
-    }
+ベースURL：
 
-    breaks {
-        bigint id PK
-        bigint attendance_record_id FK
-        time break_in
-        time break_out
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    applications {
-        bigint id PK
-        bigint user_id FK
-        bigint attendance_record_id FK
-        time clock_in
-        time clock_out
-        string comment
-        string status
-        timestamp created_at
-        timestamp updated_at
-    }
-
-    application_breaks {
-        bigint id PK
-        bigint application_id FK
-        time break_in
-        time break_out
-        timestamp created_at
-        timestamp updated_at
-    }
+~~~text
+http://localhost/api/v1
 ~~~
+
+勤怠情報API：
+
+~~~text
+GET    /attendance-records
+GET    /attendance-records/{attendanceRecord}
+POST   /attendance-records
+PUT    /attendance-records/{attendanceRecord}
+PATCH  /attendance-records/{attendanceRecord}
+DELETE /attendance-records/{attendanceRecord}
+~~~
+
+POST・PUT・PATCH・DELETEはLaravel Sanctumによる認証が必要です。
 
 ## URL
 
@@ -176,4 +154,3 @@ erDiagram
 - 管理者ログイン：http://localhost/admin/login
 - phpMyAdmin：http://localhost:8080
 - Mailpit：http://localhost:8025
-EOF
