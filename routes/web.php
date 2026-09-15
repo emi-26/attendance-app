@@ -8,6 +8,7 @@ use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\AttendanceDetailController;
 use App\Http\Controllers\AttendanceExportController;
 use App\Http\Controllers\AttendanceListController;
+use App\Http\Controllers\AttendanceReportController;
 use App\Http\Controllers\StampCorrectionRequestController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -33,6 +34,11 @@ Route::middleware([
 
     Route::get('/attendance/list', [
         AttendanceListController::class,
+        'index',
+    ]);
+
+    Route::get('/attendance/report', [
+        AttendanceReportController::class,
         'index',
     ]);
 
