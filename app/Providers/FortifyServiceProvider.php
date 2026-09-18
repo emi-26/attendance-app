@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Actions\Fortify\CreateNewUser;
-use App\Http\Requests\AdminLoginRequest;
 use App\Http\Requests\LoginRequest;
 use App\Http\Responses\LoginResponse;
 use App\Models\User;
@@ -24,10 +23,6 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->bind(
             FortifyLoginRequest::class,
             function ($app) {
-                if (request()->is('admin/login')) {
-                    return $app->make(AdminLoginRequest::class);
-                }
-
                 return $app->make(LoginRequest::class);
             }
         );
