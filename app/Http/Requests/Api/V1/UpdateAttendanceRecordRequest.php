@@ -4,6 +4,7 @@ namespace App\Http\Requests\Api\V1;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\Validator;
 
 class UpdateAttendanceRecordRequest extends FormRequest
 {
@@ -37,7 +38,6 @@ class UpdateAttendanceRecordRequest extends FormRequest
                 'sometimes',
                 'nullable',
                 'date_format:H:i:s',
-                'after:clock_in',
             ],
             'comment' => [
                 'sometimes',
@@ -46,6 +46,40 @@ class UpdateAttendanceRecordRequest extends FormRequest
                 'max:255',
             ],
         ];
+    }
+
+    public function withValidator(Validator $validator): void
+    {
+        $validator->after(function (Validator $validator): void {
+            if (! $this->has('clock_out')) {
+                return;
+            }
+
+            if ($this->input('clock_out') === null) {
+                return;
+            }
+
+            if (
+                $validator->errors()->has('clock_in') ||
+                $validator->errors()->has('clock_out')
+            ) {
+                return;
+            }
+
+            $attendanceRecord = $this->route('attendanceRecord');
+            $clockIn = $this->input(
+                'clock_in',
+                $attendanceRecord->clock_in
+            );
+            $clockOut = $this->input('clock_out');
+
+            if ($clockOut <= $clockIn) {
+                $validator->errors()->add(
+                    'clock_out',
+                    '退勤時刻は出勤時刻より後の時刻を指定してください。'
+                );
+            }
+        });
     }
 
     public function messages(): array
@@ -57,7 +91,6 @@ class UpdateAttendanceRecordRequest extends FormRequest
             'clock_in.required' => '出勤時刻は必須です。',
             'clock_in.date_format' => '出勤時刻は HH:MM:SS 形式で指定してください。',
             'clock_out.date_format' => '退勤時刻は HH:MM:SS 形式で指定してください。',
-            'clock_out.after' => '退勤時刻は出勤時刻より後の時刻を指定してください。',
             'comment.max' => '備考は 255 文字以内で入力してください。',
         ];
     }

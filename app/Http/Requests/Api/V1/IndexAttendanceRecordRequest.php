@@ -27,6 +27,11 @@ class IndexAttendanceRecordRequest extends FormRequest
                 'nullable',
                 'date_format:Y-m',
             ],
+            'page' => [
+                'nullable',
+                'integer',
+                'min:1',
+            ],
             'per_page' => [
                 'nullable',
                 'integer',
