@@ -21,8 +21,10 @@ class AdminStaffController extends Controller
         ]);
     }
 
-    public function show(Request $request, User $user): View
+    public function show(Request $request, int $id): View
     {
+        $user = User::findOrFail($id);
+
         abort_if($user->admin_status, 404);
 
         $date = $request->filled('date')

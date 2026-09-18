@@ -42,12 +42,12 @@ Route::middleware([
         'index',
     ]);
 
-    Route::get('/attendance/detail/{attendanceRecord}', [
+    Route::get('/attendance/detail/{id}', [
         AttendanceDetailController::class,
         'show',
     ]);
 
-    Route::post('/attendance/{attendanceRecord}', [
+    Route::post('/attendance/{id}', [
         AttendanceDetailController::class,
         'store',
     ]);
@@ -90,12 +90,12 @@ Route::middleware([
         'index',
     ]);
 
-    Route::get('/admin/attendance/{attendanceRecord}', [
+    Route::get('/admin/attendance/{id}', [
         AdminAttendanceController::class,
         'show',
     ]);
 
-    Route::post('/admin/attendance/{attendanceRecord}', [
+    Route::post('/admin/attendance/{id}', [
         AdminAttendanceController::class,
         'update',
     ]);
@@ -105,7 +105,7 @@ Route::middleware([
         'index',
     ]);
 
-    Route::get('/admin/attendance/staff/{user}', [
+    Route::get('/admin/attendance/staff/{id}', [
         AdminStaffController::class,
         'show',
     ]);
@@ -116,7 +116,7 @@ Route::middleware([
     ]);
 
     Route::get(
-        '/stamp_correction_request/approve/{application}',
+        '/stamp_correction_request/approve/{attendance_correct_request_id}',
         [
             AdminStampCorrectionRequestController::class,
             'show',
@@ -124,7 +124,7 @@ Route::middleware([
     );
 
     Route::post(
-        '/stamp_correction_request/approve/{application}',
+        '/stamp_correction_request/approve/{attendance_correct_request_id}',
         [
             AdminStampCorrectionRequestController::class,
             'approve',

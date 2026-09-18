@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use Illuminate\View\View;
+
 class AdminAuthController extends Controller
 {
-    public function showLoginForm()
+    public function showLoginForm(): View
     {
         return view('admin.admin-login');
     }

@@ -32,8 +32,13 @@ class AdminStampCorrectionRequestController extends Controller
         ]);
     }
 
-    public function show(Application $application): View
-    {
+    public function show(
+        int $attendance_correct_request_id
+    ): View {
+        $application = Application::findOrFail(
+            $attendance_correct_request_id
+        );
+
         $application->load([
             'user',
             'attendanceRecord',
@@ -68,8 +73,12 @@ class AdminStampCorrectionRequestController extends Controller
     }
 
     public function approve(
-        Application $application
+        int $attendance_correct_request_id
     ): RedirectResponse {
+        $application = Application::findOrFail(
+            $attendance_correct_request_id
+        );
+
         if ($application->status === 'approved') {
             return redirect(
                 '/stamp_correction_request/approve/'.$application->id
@@ -81,7 +90,7 @@ class AdminStampCorrectionRequestController extends Controller
             'applicationBreaks',
         ]);
 
-        DB::transaction(function () use ($application) {
+        DB::transaction(function () use ($application): void {
             $attendanceRecord = $application->attendanceRecord;
 
             $attendanceRecord->update([

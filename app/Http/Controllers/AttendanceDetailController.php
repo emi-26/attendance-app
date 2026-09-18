@@ -14,8 +14,10 @@ class AttendanceDetailController extends Controller
 {
     public function show(
         Request $request,
-        AttendanceRecord $attendanceRecord
+        int $id
     ): View {
+        $attendanceRecord = AttendanceRecord::findOrFail($id);
+
         if ($request->user()->admin_status) {
             return app(AdminAttendanceController::class)
                 ->show($attendanceRecord);
@@ -76,8 +78,10 @@ class AttendanceDetailController extends Controller
 
     public function store(
         AttendanceCorrectionRequest $request,
-        AttendanceRecord $attendanceRecord
+        int $id
     ): RedirectResponse {
+        $attendanceRecord = AttendanceRecord::findOrFail($id);
+
         if ($request->user()->admin_status) {
             return app(AdminAttendanceController::class)
                 ->update($request, $attendanceRecord);
@@ -95,7 +99,7 @@ class AttendanceDetailController extends Controller
             );
         }
 
-        DB::transaction(function () use ($request, $attendanceRecord) {
+        DB::transaction(function () use ($request, $attendanceRecord): void {
             $application = $attendanceRecord->applications()->create([
                 'user_id' => $request->user()->id,
                 'clock_in' => $request->input('new_clock_in'),

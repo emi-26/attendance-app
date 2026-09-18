@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\AttendanceRecord;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -34,7 +35,7 @@ class AttendanceExportController extends Controller
         );
 
         return response()->streamDownload(
-            function () use ($attendanceRecords) {
+            function () use ($attendanceRecords): void {
                 $stream = fopen('php://output', 'w');
 
                 fwrite($stream, "\xEF\xBB\xBF");
@@ -75,8 +76,9 @@ class AttendanceExportController extends Controller
         );
     }
 
-    private function calculateBreakTime($attendanceRecord): string
-    {
+    private function calculateBreakTime(
+        AttendanceRecord $attendanceRecord
+    ): string {
         $minutes = $attendanceRecord->breaks
             ->filter(
                 fn ($break) => $break->break_in && $break->break_out
@@ -91,8 +93,9 @@ class AttendanceExportController extends Controller
         return $this->formatMinutes($minutes);
     }
 
-    private function calculateWorkTime($attendanceRecord): string
-    {
+    private function calculateWorkTime(
+        AttendanceRecord $attendanceRecord
+    ): string {
         if (
             ! $attendanceRecord->clock_in ||
             ! $attendanceRecord->clock_out

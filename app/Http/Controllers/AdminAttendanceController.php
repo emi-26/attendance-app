@@ -42,8 +42,10 @@ class AdminAttendanceController extends Controller
         ]);
     }
 
-    public function show(AttendanceRecord $attendanceRecord): View
+    public function show(int $id): View
     {
+        $attendanceRecord = AttendanceRecord::findOrFail($id);
+
         $attendanceRecord->load('breaks');
 
         $date = Carbon::parse($attendanceRecord->date);
@@ -74,9 +76,11 @@ class AdminAttendanceController extends Controller
 
     public function update(
         AttendanceCorrectionRequest $request,
-        AttendanceRecord $attendanceRecord
+        int $id
     ): RedirectResponse {
-        DB::transaction(function () use ($request, $attendanceRecord) {
+        $attendanceRecord = AttendanceRecord::findOrFail($id);
+
+        DB::transaction(function () use ($request, $attendanceRecord): void {
             $attendanceRecord->update([
                 'clock_in' => $request->input('new_clock_in'),
                 'clock_out' => $request->input('new_clock_out'),

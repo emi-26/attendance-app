@@ -20,7 +20,10 @@ class AttendanceRecordController extends Controller
         $validated = $request->validated();
         $perPage = $validated['per_page'] ?? 20;
 
-        $query = AttendanceRecord::with('user');
+        $query = AttendanceRecord::with([
+            'user',
+            'breaks',
+        ]);
 
         if (isset($validated['user_id'])) {
             $query->where('user_id', $validated['user_id']);
