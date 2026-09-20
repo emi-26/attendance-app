@@ -7,9 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 class IndexAttendanceRecordRequest extends FormRequest
 {
     /**
-     * リクエストの実行を許可する。
-     *
-     * @return bool 常にtrue
+     * リクエストを許可する。
      */
     public function authorize(): bool
     {
@@ -17,18 +15,13 @@ class IndexAttendanceRecordRequest extends FormRequest
     }
 
     /**
-     * 勤怠一覧取得時のバリデーションルールを返す。
+     * バリデーションルールを取得する。
      *
-     * @return array<string, mixed> バリデーションルール
+     * @return array<string, mixed>
      */
     public function rules(): array
     {
         return [
-            'user_id' => [
-                'nullable',
-                'integer',
-                'exists:users,id',
-            ],
             'date' => [
                 'nullable',
                 'date_format:Y-m-d',
@@ -36,6 +29,10 @@ class IndexAttendanceRecordRequest extends FormRequest
             'month' => [
                 'nullable',
                 'date_format:Y-m',
+            ],
+            'user_id' => [
+                'nullable',
+                'integer',
             ],
             'page' => [
                 'nullable',
