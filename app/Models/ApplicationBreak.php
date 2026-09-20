@@ -16,6 +16,11 @@ class ApplicationBreak extends Model
         'break_out',
     ];
 
+    /**
+     * 所属する修正申請を取得する。
+     *
+     * @return BelongsTo 修正申請とのリレーション
+     */
     public function application(): BelongsTo
     {
         return $this->belongsTo(Application::class);

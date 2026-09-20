@@ -10,6 +10,12 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AttendanceExportController extends Controller
 {
+    /**
+     * 指定ユーザー・指定月の勤怠情報をCSV出力する。
+     *
+     * @param  Request  $request  ユーザーIDと対象年月を含むリクエスト
+     * @return StreamedResponse CSVダウンロードレスポンス
+     */
     public function export(Request $request): StreamedResponse
     {
         $user = User::where('admin_status', false)
@@ -76,6 +82,12 @@ class AttendanceExportController extends Controller
         );
     }
 
+    /**
+     * 勤怠記録の休憩時間を計算する。
+     *
+     * @param  AttendanceRecord  $attendanceRecord  集計対象の勤怠記録
+     * @return string 休憩時間
+     */
     private function calculateBreakTime(
         AttendanceRecord $attendanceRecord
     ): string {
@@ -93,6 +105,12 @@ class AttendanceExportController extends Controller
         return $this->formatMinutes($minutes);
     }
 
+    /**
+     * 勤怠記録の実労働時間を計算する。
+     *
+     * @param  AttendanceRecord  $attendanceRecord  集計対象の勤怠記録
+     * @return string 実労働時間
+     */
     private function calculateWorkTime(
         AttendanceRecord $attendanceRecord
     ): string {
@@ -125,6 +143,12 @@ class AttendanceExportController extends Controller
         );
     }
 
+    /**
+     * 分数をHH:MM形式に変換する。
+     *
+     * @param  int  $minutes  分単位の時間
+     * @return string HH:MM形式の時間
+     */
     private function formatMinutes(int $minutes): string
     {
         return sprintf(
@@ -134,6 +158,12 @@ class AttendanceExportController extends Controller
         );
     }
 
+    /**
+     * 時刻をH:i形式に整形する。
+     *
+     * @param  string|null  $time  整形対象の時刻
+     * @return string 整形後の時刻
+     */
     private function formatTime(?string $time): string
     {
         return $time

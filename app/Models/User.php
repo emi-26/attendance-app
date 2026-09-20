@@ -32,16 +32,31 @@ class User extends Authenticatable implements MustVerifyEmail
         'admin_status' => 'boolean',
     ];
 
+    /**
+     * ユーザーの勤怠記録を取得する。
+     *
+     * @return HasMany 勤怠記録とのリレーション
+     */
     public function attendanceRecords(): HasMany
     {
         return $this->hasMany(AttendanceRecord::class);
     }
 
+    /**
+     * ユーザーの勤怠修正申請を取得する。
+     *
+     * @return HasMany 修正申請とのリレーション
+     */
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }
 
+    /**
+     * 当日の勤怠状態を取得する。
+     *
+     * @return string 勤務外・出勤中・休憩中・退勤済のいずれか
+     */
     public function getAttendanceStatusAttribute(): string
     {
         $today = Carbon::now('Asia/Tokyo')->toDateString();

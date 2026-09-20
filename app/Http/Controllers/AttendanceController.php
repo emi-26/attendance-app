@@ -10,6 +10,12 @@ use Illuminate\View\View;
 
 class AttendanceController extends Controller
 {
+    /**
+     * 一般ユーザーの勤怠登録画面を表示する。
+     *
+     * @param  Request  $request  認証済みユーザーのリクエスト
+     * @return View 勤怠登録画面
+     */
     public function index(Request $request): View
     {
         $now = Carbon::now('Asia/Tokyo')->locale('ja');
@@ -21,6 +27,12 @@ class AttendanceController extends Controller
         ]);
     }
 
+    /**
+     * 出勤・休憩・退勤の打刻処理を実行する。
+     *
+     * @param  Request  $request  打刻内容を含むリクエスト
+     * @return RedirectResponse 勤怠登録画面へのリダイレクト
+     */
     public function store(Request $request): RedirectResponse
     {
         $now = Carbon::now('Asia/Tokyo');

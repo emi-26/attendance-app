@@ -14,6 +14,12 @@ use Illuminate\Http\Response;
 
 class AttendanceRecordController extends Controller
 {
+    /**
+     * 勤怠記録一覧を条件付きで取得する。
+     *
+     * @param  IndexAttendanceRecordRequest  $request  検索条件を含むリクエスト
+     * @return AnonymousResourceCollection 勤怠記録一覧
+     */
     public function index(
         IndexAttendanceRecordRequest $request
     ): AnonymousResourceCollection {
@@ -52,6 +58,12 @@ class AttendanceRecordController extends Controller
         );
     }
 
+    /**
+     * 指定した勤怠記録の詳細を取得する。
+     *
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠記録
+     * @return AttendanceRecordResource 勤怠記録詳細
+     */
     public function show(
         AttendanceRecord $attendanceRecord
     ): AttendanceRecordResource {
@@ -66,6 +78,12 @@ class AttendanceRecordController extends Controller
         );
     }
 
+    /**
+     * 認証ユーザーの勤怠記録を新規登録する。
+     *
+     * @param  StoreAttendanceRecordRequest  $request  検証済みの勤怠情報
+     * @return JsonResponse 登録した勤怠記録
+     */
     public function store(
         StoreAttendanceRecordRequest $request
     ): JsonResponse {
@@ -85,6 +103,13 @@ class AttendanceRecordController extends Controller
             ->setStatusCode(201);
     }
 
+    /**
+     * 権限確認後に指定した勤怠記録を更新する。
+     *
+     * @param  UpdateAttendanceRecordRequest  $request  検証済みの更新内容
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠記録
+     * @return AttendanceRecordResource 更新後の勤怠記録
+     */
     public function update(
         UpdateAttendanceRecordRequest $request,
         AttendanceRecord $attendanceRecord
@@ -108,6 +133,12 @@ class AttendanceRecordController extends Controller
         );
     }
 
+    /**
+     * 権限確認後に指定した勤怠記録を削除する。
+     *
+     * @param  AttendanceRecord  $attendanceRecord  対象の勤怠記録
+     * @return Response 空の204レスポンス
+     */
     public function destroy(
         AttendanceRecord $attendanceRecord
     ): Response {

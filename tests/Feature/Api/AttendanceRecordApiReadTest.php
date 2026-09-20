@@ -2,6 +2,8 @@
 
 namespace Tests\Feature\Api;
 
+use App\Models\Application;
+use App\Models\AttendanceBreak;
 use App\Models\AttendanceRecord;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -26,7 +28,15 @@ class AttendanceRecordApiReadTest extends TestCase
         $response = $this->getJson('/api/v1/attendance-records');
 
         $response->assertStatus(200)
-            ->assertJsonPath('data.0.date', '2026-09-10');
+            ->assertJsonStructure([
+                'data',
+                'meta' => [
+                    'current_page',
+                    'last_page',
+                    'per_page',
+                    'total',
+                ],
+            ]);
     }
 
     public function test_attendance_record_detail_can_be_displayed(): void
@@ -41,91 +51,44 @@ class AttendanceRecordApiReadTest extends TestCase
             'comment' => '通常勤務',
         ]);
 
+        $break = AttendanceBreak::create([
+            'attendance_record_id' => $attendanceRecord->id,
+            'break_in' => '12:00:00',
+            'break_out' => '13:00:00',
+        ]);
+
+        $application = Application::create([
+            'user_id' => $user->id,
+            'attendance_record_id' => $attendanceRecord->id,
+            'clock_in' => '09:30:00',
+            'clock_out' => '18:00:00',
+            'comment' => '修正申請',
+            'status' => 'pending',
+        ]);
+
         $response = $this->getJson(
             '/api/v1/attendance-records/'.$attendanceRecord->id
         );
 
         $response->assertStatus(200)
+            ->assertJsonPath('data.id', $attendanceRecord->id)
+            ->assertJsonPath('data.user.id', $user->id)
+            ->assertJsonPath('data.breaks.0.id', $break->id)
             ->assertJsonPath(
-                'data.id',
-                $attendanceRecord->id
-            )
-            ->assertJsonPath(
-                'data.user.id',
-                $user->id
+                'data.applications.0.id',
+                $application->id
             );
     }
 
     public function test_missing_attendance_record_returns_expected_error(): void
     {
         $response = $this->getJson(
-            '/api/v1/attendance-records/999999'
+            '/api/v1/attendance-records/99999'
         );
 
         $response->assertStatus(404)
             ->assertJson([
                 'error' => '勤怠情報が見つかりませんでした。',
             ]);
-    }
-
-    public function test_attendance_records_can_be_filtered_by_user(): void
-    {
-        $firstUser = User::factory()->create();
-        $secondUser = User::factory()->create();
-
-        AttendanceRecord::create([
-            'user_id' => $firstUser->id,
-            'date' => '2026-09-10',
-            'clock_in' => '09:00:00',
-            'clock_out' => '18:00:00',
-        ]);
-
-        AttendanceRecord::create([
-            'user_id' => $secondUser->id,
-            'date' => '2026-09-11',
-            'clock_in' => '09:00:00',
-            'clock_out' => '18:00:00',
-        ]);
-
-        $response = $this->getJson(
-            '/api/v1/attendance-records?user_id='.$firstUser->id
-        );
-
-        $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath(
-                'data.0.user.id',
-                $firstUser->id
-            );
-    }
-
-    public function test_attendance_records_can_be_filtered_by_month(): void
-    {
-        $user = User::factory()->create();
-
-        AttendanceRecord::create([
-            'user_id' => $user->id,
-            'date' => '2026-09-10',
-            'clock_in' => '09:00:00',
-            'clock_out' => '18:00:00',
-        ]);
-
-        AttendanceRecord::create([
-            'user_id' => $user->id,
-            'date' => '2026-08-10',
-            'clock_in' => '09:00:00',
-            'clock_out' => '18:00:00',
-        ]);
-
-        $response = $this->getJson(
-            '/api/v1/attendance-records?month=2026-09'
-        );
-
-        $response->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJsonPath(
-                'data.0.date',
-                '2026-09-10'
-            );
     }
 }

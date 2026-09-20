@@ -20,21 +20,41 @@ class AttendanceRecord extends Model
         'comment',
     ];
 
+    /**
+     * 勤怠記録のユーザーを取得する。
+     *
+     * @return BelongsTo ユーザーとのリレーション
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * 勤怠記録の休憩情報を取得する。
+     *
+     * @return HasMany 休憩情報とのリレーション
+     */
     public function breaks(): HasMany
     {
         return $this->hasMany(AttendanceBreak::class);
     }
 
+    /**
+     * 勤怠記録に対する修正申請を取得する。
+     *
+     * @return HasMany 修正申請とのリレーション
+     */
     public function applications(): HasMany
     {
         return $this->hasMany(Application::class);
     }
 
+    /**
+     * 合計休憩時間を取得する。
+     *
+     * @return string HH:MM形式の休憩時間
+     */
     public function getTotalBreakTimeAttribute(): string
     {
         $breakMinutes = $this->breaks
@@ -52,6 +72,11 @@ class AttendanceRecord extends Model
         return $this->formatMinutes($breakMinutes);
     }
 
+    /**
+     * 実労働時間を取得する。
+     *
+     * @return string HH:MM形式の実労働時間
+     */
     public function getTotalTimeAttribute(): string
     {
         if (! $this->clock_in || ! $this->clock_out) {
@@ -80,6 +105,12 @@ class AttendanceRecord extends Model
         );
     }
 
+    /**
+     * 分数をHH:MM形式に変換する。
+     *
+     * @param  int  $minutes  分単位の時間
+     * @return string HH:MM形式の時間
+     */
     private function formatMinutes(int $minutes): string
     {
         return sprintf(

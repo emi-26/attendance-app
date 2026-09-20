@@ -2,17 +2,28 @@
 
 namespace App\Http\Requests\Api\V1;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
 
 class UpdateAttendanceRecordRequest extends FormRequest
 {
+    /**
+     * リクエストの実行を許可する。
+     *
+     * @return bool 常にtrue
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * 勤怠更新時のバリデーションルールを返す。
+     *
+     * @return array<string, mixed> バリデーションルール
+     */
     public function rules(): array
     {
         $attendanceRecord = $this->route('attendanceRecord');
@@ -48,40 +59,69 @@ class UpdateAttendanceRecordRequest extends FormRequest
         ];
     }
 
+    /**
+     * 出退勤時刻の前後関係を追加で検証する。
+     *
+     * @param  Validator  $validator  バリデーター
+     */
     public function withValidator(Validator $validator): void
     {
         $validator->after(function (Validator $validator): void {
-            if (! $this->has('clock_out')) {
-                return;
-            }
-
-            if ($this->input('clock_out') === null) {
+            if (
+                ! $this->has('clock_in')
+                && ! $this->has('clock_out')
+            ) {
                 return;
             }
 
             if (
-                $validator->errors()->has('clock_in') ||
-                $validator->errors()->has('clock_out')
+                $validator->errors()->has('clock_in')
+                || $validator->errors()->has('clock_out')
             ) {
                 return;
             }
 
             $attendanceRecord = $this->route('attendanceRecord');
-            $clockIn = $this->input(
+
+            $clockInValue = $this->input(
                 'clock_in',
                 $attendanceRecord->clock_in
             );
-            $clockOut = $this->input('clock_out');
 
-            if ($clockOut <= $clockIn) {
-                $validator->errors()->add(
-                    'clock_out',
-                    '退勤時刻は出勤時刻より後の時刻を指定してください。'
-                );
+            $clockOutValue = $this->has('clock_out')
+                ? $this->input('clock_out')
+                : $attendanceRecord->clock_out;
+
+            if ($clockOutValue === null) {
+                return;
             }
+
+            $clockIn = Carbon::createFromFormat(
+                'H:i:s',
+                $clockInValue
+            );
+
+            $clockOut = Carbon::createFromFormat(
+                'H:i:s',
+                $clockOutValue
+            );
+
+            if ($clockOut->gt($clockIn)) {
+                return;
+            }
+
+            $validator->errors()->add(
+                'clock_out',
+                '退勤時刻は出勤時刻より後の時刻を指定してください。'
+            );
         });
     }
 
+    /**
+     * 勤怠更新時のエラーメッセージを返す。
+     *
+     * @return array<string, string> エラーメッセージ
+     */
     public function messages(): array
     {
         return [

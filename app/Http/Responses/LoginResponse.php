@@ -6,6 +6,12 @@ use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 
 class LoginResponse implements LoginResponseContract
 {
+    /**
+     * ログイン後の遷移先をユーザー種別に応じて返す。
+     *
+     * @param  mixed  $request  ログインリクエスト
+     * @return mixed リダイレクトレスポンス
+     */
     public function toResponse($request)
     {
         if ($request->user()->admin_status) {

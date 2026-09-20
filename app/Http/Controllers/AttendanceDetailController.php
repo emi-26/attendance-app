@@ -12,6 +12,13 @@ use Illuminate\View\View;
 
 class AttendanceDetailController extends Controller
 {
+    /**
+     * 指定した勤怠の詳細を表示する。
+     *
+     * @param  Request  $request  認証済みユーザーのリクエスト
+     * @param  int  $id  勤怠記録ID
+     * @return View 勤怠詳細画面
+     */
     public function show(
         Request $request,
         int $id
@@ -76,6 +83,13 @@ class AttendanceDetailController extends Controller
         ]);
     }
 
+    /**
+     * 一般ユーザーの勤怠修正申請を登録する。
+     *
+     * @param  AttendanceCorrectionRequest  $request  検証済みの修正内容
+     * @param  int  $id  勤怠記録ID
+     * @return RedirectResponse 申請一覧画面へのリダイレクト
+     */
     public function store(
         AttendanceCorrectionRequest $request,
         int $id
@@ -128,6 +142,12 @@ class AttendanceDetailController extends Controller
         return redirect('/stamp_correction_request/list');
     }
 
+    /**
+     * 勤怠記録がログインユーザー本人のものか確認する。
+     *
+     * @param  Request  $request  認証済みユーザーのリクエスト
+     * @param  AttendanceRecord  $attendanceRecord  確認対象の勤怠記録
+     */
     private function authorizeRecord(
         Request $request,
         AttendanceRecord $attendanceRecord
@@ -138,6 +158,12 @@ class AttendanceDetailController extends Controller
         );
     }
 
+    /**
+     * 時刻をH:i形式に整形する。
+     *
+     * @param  string|null  $time  整形対象の時刻
+     * @return string 整形後の時刻
+     */
     private function formatTime(?string $time): string
     {
         return $time

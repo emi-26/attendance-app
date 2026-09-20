@@ -10,6 +10,11 @@ use Illuminate\View\View;
 
 class AdminStaffController extends Controller
 {
+    /**
+     * 一般ユーザー一覧を表示する。
+     *
+     * @return View スタッフ一覧画面
+     */
     public function index(): View
     {
         $users = User::where('admin_status', false)
@@ -21,6 +26,13 @@ class AdminStaffController extends Controller
         ]);
     }
 
+    /**
+     * 指定ユーザーの月別勤怠一覧を表示する。
+     *
+     * @param  Request  $request  表示月を含むリクエスト
+     * @param  int  $id  ユーザーID
+     * @return View スタッフ勤怠一覧画面
+     */
     public function show(Request $request, int $id): View
     {
         $user = User::findOrFail($id);
@@ -80,6 +92,12 @@ class AdminStaffController extends Controller
         ]);
     }
 
+    /**
+     * 勤怠記録の休憩時間を計算する。
+     *
+     * @param  AttendanceRecord  $record  集計対象の勤怠記録
+     * @return string 休憩時間
+     */
     private function calculateBreakTime(
         AttendanceRecord $record
     ): string {
@@ -95,6 +113,12 @@ class AdminStaffController extends Controller
             : '';
     }
 
+    /**
+     * 勤怠記録の実労働時間を計算する。
+     *
+     * @param  AttendanceRecord  $record  集計対象の勤怠記録
+     * @return string 実労働時間
+     */
     private function calculateWorkTime(
         AttendanceRecord $record
     ): string {
@@ -115,6 +139,12 @@ class AdminStaffController extends Controller
         return $this->formatMinutes($workMinutes - $breakMinutes);
     }
 
+    /**
+     * 分数をHH:MM:SS形式に変換する。
+     *
+     * @param  int  $minutes  分単位の時間
+     * @return string HH:MM:SS形式の時間
+     */
     private function formatMinutes(int $minutes): string
     {
         return sprintf(
@@ -124,6 +154,12 @@ class AdminStaffController extends Controller
         );
     }
 
+    /**
+     * 時刻をH:i形式に整形する。
+     *
+     * @param  string|null  $time  整形対象の時刻
+     * @return string 整形後の時刻
+     */
     private function formatTime(?string $time): string
     {
         return $time

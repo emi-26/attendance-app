@@ -18,6 +18,11 @@ class AttendanceBreak extends Model
         'break_out',
     ];
 
+    /**
+     * 所属する勤怠記録を取得する。
+     *
+     * @return BelongsTo 勤怠記録とのリレーション
+     */
     public function attendanceRecord(): BelongsTo
     {
         return $this->belongsTo(AttendanceRecord::class);

@@ -7,6 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class AttendanceRecordResource extends JsonResource
 {
+    /**
+     * 勤怠記録をAPIレスポンス用の配列に変換する。
+     *
+     * @param  Request  $request  APIリクエスト
+     * @return array<string, mixed> 勤怠記録データ
+     */
     public function toArray(Request $request): array
     {
         return [

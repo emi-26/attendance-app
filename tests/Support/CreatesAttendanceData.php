@@ -9,6 +9,8 @@ use Illuminate\Testing\TestResponse;
 
 trait CreatesAttendanceData
 {
+    use InteractsWithAttendance;
+
     protected function tearDown(): void
     {
         Carbon::setTestNow();
@@ -16,35 +18,17 @@ trait CreatesAttendanceData
         parent::tearDown();
     }
 
-    protected function setTestNow(): void
-    {
-        $this->setTestTime(10);
-    }
-
-    protected function setTestTime(int $hour, int $minute = 0): void
-    {
-        Carbon::setTestNow(
-            Carbon::create(
-                2026,
-                9,
-                10,
-                $hour,
-                $minute,
-                0,
-                'Asia/Tokyo'
-            )
-        );
-    }
-
-    protected function createAdmin(array $attributes = []): User
-    {
+    protected function createAdmin(
+        array $attributes = []
+    ): User {
         return User::factory()->create(array_merge([
             'admin_status' => true,
         ], $attributes));
     }
 
-    protected function createUser(array $attributes = []): User
-    {
+    protected function createUser(
+        array $attributes = []
+    ): User {
         return User::factory()->create(array_merge([
             'admin_status' => false,
         ], $attributes));
@@ -132,48 +116,6 @@ trait CreatesAttendanceData
         );
 
         return [$admin, $record];
-    }
-
-    protected function postAttendanceAction(string $action): TestResponse
-    {
-        return $this->post('/attendance', [
-            'action' => $action,
-        ]);
-    }
-
-    protected function startWork(): void
-    {
-        $user = $this->createUser();
-
-        $this->startWorkAt($user);
-    }
-
-    protected function startWorkAt(
-        User $user,
-        int $hour = 9,
-        int $minute = 0
-    ): void {
-        $this->setTestTime($hour, $minute);
-        $this->actingAs($user);
-        $this->postAttendanceAction('clock_in');
-    }
-
-    protected function startBreakAt(int $hour, int $minute = 0): void
-    {
-        $this->setTestTime($hour, $minute);
-        $this->postAttendanceAction('break_in');
-    }
-
-    protected function endBreakAt(int $hour, int $minute = 0): void
-    {
-        $this->setTestTime($hour, $minute);
-        $this->postAttendanceAction('break_out');
-    }
-
-    protected function endWorkAt(int $hour, int $minute = 0): void
-    {
-        $this->setTestTime($hour, $minute);
-        $this->postAttendanceAction('clock_out');
     }
 
     protected function postAdminAttendanceUpdate(

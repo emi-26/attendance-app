@@ -18,6 +18,9 @@ use Laravel\Fortify\Http\Requests\LoginRequest as FortifyLoginRequest;
 
 class FortifyServiceProvider extends ServiceProvider
 {
+    /**
+     * Fortifyのログイン関連クラスをコンテナへ登録する。
+     */
     public function register(): void
     {
         $this->app->bind(
@@ -33,6 +36,9 @@ class FortifyServiceProvider extends ServiceProvider
         );
     }
 
+    /**
+     * 認証画面・認証処理・レート制限を設定する。
+     */
     public function boot(): void
     {
         Fortify::registerView(function () {
@@ -50,7 +56,10 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::authenticateUsing(function (Request $request) {
             $user = User::where('email', $request->email)->first();
 
-            if (! $user || ! Hash::check($request->password, $user->password)) {
+            if (
+                ! $user ||
+                ! Hash::check($request->password, $user->password)
+            ) {
                 return null;
             }
 
@@ -65,7 +74,9 @@ class FortifyServiceProvider extends ServiceProvider
 
         RateLimiter::for('login', function (Request $request) {
             $throttleKey = Str::transliterate(
-                Str::lower($request->input(Fortify::username())).'|'.$request->ip()
+                Str::lower(
+                    $request->input(Fortify::username())
+                ).'|'.$request->ip()
             );
 
             return Limit::perMinute(5)->by($throttleKey);

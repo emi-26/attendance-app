@@ -10,6 +10,11 @@ use Illuminate\View\View;
 
 class AdminStampCorrectionRequestController extends Controller
 {
+    /**
+     * 管理者用の申請一覧を表示する。
+     *
+     * @return View 管理者用申請一覧画面
+     */
     public function index(): View
     {
         $applications = Application::with([
@@ -32,6 +37,12 @@ class AdminStampCorrectionRequestController extends Controller
         ]);
     }
 
+    /**
+     * 指定した修正申請の詳細を表示する。
+     *
+     * @param  int  $attendance_correct_request_id  修正申請ID
+     * @return View 管理者用申請詳細画面
+     */
     public function show(
         int $attendance_correct_request_id
     ): View {
@@ -72,6 +83,12 @@ class AdminStampCorrectionRequestController extends Controller
         ]);
     }
 
+    /**
+     * 修正申請を承認して勤怠情報へ反映する。
+     *
+     * @param  int  $attendance_correct_request_id  修正申請ID
+     * @return RedirectResponse 承認画面へのリダイレクト
+     */
     public function approve(
         int $attendance_correct_request_id
     ): RedirectResponse {
@@ -118,6 +135,12 @@ class AdminStampCorrectionRequestController extends Controller
         );
     }
 
+    /**
+     * 時刻をH:i形式に整形する。
+     *
+     * @param  string|null  $time  整形対象の時刻
+     * @return string 整形後の時刻
+     */
     private function formatTime(?string $time): string
     {
         return $time

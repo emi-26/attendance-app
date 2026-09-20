@@ -20,16 +20,31 @@ class Application extends Model
         'status',
     ];
 
+    /**
+     * 申請者を取得する。
+     *
+     * @return BelongsTo 申請者とのリレーション
+     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
+    /**
+     * 申請対象の勤怠記録を取得する。
+     *
+     * @return BelongsTo 勤怠記録とのリレーション
+     */
     public function attendanceRecord(): BelongsTo
     {
         return $this->belongsTo(AttendanceRecord::class);
     }
 
+    /**
+     * 申請された休憩情報を取得する。
+     *
+     * @return HasMany 申請休憩情報とのリレーション
+     */
     public function applicationBreaks(): HasMany
     {
         return $this->hasMany(ApplicationBreak::class);

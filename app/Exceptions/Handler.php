@@ -15,6 +15,9 @@ class Handler extends ExceptionHandler
         'password_confirmation',
     ];
 
+    /**
+     * API向けの例外レスポンス処理を登録する。
+     */
     public function register(): void
     {
         $this->renderable(

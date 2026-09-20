@@ -34,6 +34,20 @@ class EmailVerificationTest extends TestCase
         );
     }
 
+    public function test_verification_notice_has_verification_site_link(): void
+    {
+        $user = User::factory()->unverified()->create([
+            'admin_status' => false,
+        ]);
+
+        $response = $this->actingAs($user)
+            ->get('/email/verify');
+
+        $response->assertStatus(200)
+            ->assertSee('認証はこちらから')
+            ->assertSee('http://localhost:8025', false);
+    }
+
     public function test_unverified_user_is_redirected_to_verification_notice(): void
     {
         $user = User::factory()->unverified()->create([

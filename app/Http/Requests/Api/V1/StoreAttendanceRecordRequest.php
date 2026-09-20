@@ -7,11 +7,21 @@ use Illuminate\Validation\Rule;
 
 class StoreAttendanceRecordRequest extends FormRequest
 {
+    /**
+     * リクエストの実行を許可する。
+     *
+     * @return bool 常にtrue
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * 勤怠登録時のバリデーションルールを返す。
+     *
+     * @return array<string, mixed> バリデーションルール
+     */
     public function rules(): array
     {
         return [
@@ -41,6 +51,11 @@ class StoreAttendanceRecordRequest extends FormRequest
         ];
     }
 
+    /**
+     * 勤怠登録時のエラーメッセージを返す。
+     *
+     * @return array<string, string> エラーメッセージ
+     */
     public function messages(): array
     {
         return [

@@ -51,7 +51,7 @@ class AttendanceRecordApiWriteTest extends TestCase
 
         Sanctum::actingAs($user);
 
-        $response = $this->patchJson(
+        $response = $this->putJson(
             '/api/v1/attendance-records/'.$record->id,
             [
                 'clock_in' => '08:30:00',
@@ -77,7 +77,7 @@ class AttendanceRecordApiWriteTest extends TestCase
 
         Sanctum::actingAs($otherUser);
 
-        $response = $this->patchJson(
+        $response = $this->putJson(
             '/api/v1/attendance-records/'.$record->id,
             [
                 'comment' => '変更後',
@@ -102,7 +102,7 @@ class AttendanceRecordApiWriteTest extends TestCase
 
         Sanctum::actingAs($admin);
 
-        $response = $this->patchJson(
+        $response = $this->putJson(
             '/api/v1/attendance-records/'.$record->id,
             [
                 'comment' => '管理者変更',

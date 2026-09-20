@@ -7,6 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserResource extends JsonResource
 {
+    /**
+     * ユーザーをAPIレスポンス用の配列に変換する。
+     *
+     * @param  Request  $request  APIリクエスト
+     * @return array<string, mixed> ユーザーデータ
+     */
     public function toArray(Request $request): array
     {
         return [

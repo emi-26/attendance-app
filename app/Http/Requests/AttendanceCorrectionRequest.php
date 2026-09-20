@@ -8,11 +8,21 @@ use Illuminate\Validation\Validator;
 
 class AttendanceCorrectionRequest extends FormRequest
 {
+    /**
+     * リクエストの実行を許可する。
+     *
+     * @return bool 常にtrue
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * 勤怠修正時のバリデーションルールを返す。
+     *
+     * @return array<string, mixed> バリデーションルール
+     */
     public function rules(): array
     {
         return [
@@ -26,6 +36,11 @@ class AttendanceCorrectionRequest extends FormRequest
         ];
     }
 
+    /**
+     * 勤怠修正時のエラーメッセージを返す。
+     *
+     * @return array<string, string> エラーメッセージ
+     */
     public function messages(): array
     {
         return [
@@ -33,6 +48,11 @@ class AttendanceCorrectionRequest extends FormRequest
         ];
     }
 
+    /**
+     * 出退勤時刻と休憩時刻の前後関係を追加検証する。
+     *
+     * @return array<int, callable> 追加バリデーション処理
+     */
     public function after(): array
     {
         return [
@@ -80,7 +100,10 @@ class AttendanceCorrectionRequest extends FormRequest
                         $breakInValue
                     );
 
-                    if ($breakIn->lt($clockIn) || $breakIn->gt($clockOut)) {
+                    if (
+                        $breakIn->lt($clockIn) ||
+                        $breakIn->gt($clockOut)
+                    ) {
                         $validator->errors()->add(
                             'new_break_in.'.$index,
                             '休憩時間が不適切な値です'

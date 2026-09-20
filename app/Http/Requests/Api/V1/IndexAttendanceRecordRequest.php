@@ -6,11 +6,21 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class IndexAttendanceRecordRequest extends FormRequest
 {
+    /**
+     * リクエストの実行を許可する。
+     *
+     * @return bool 常にtrue
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * 勤怠一覧取得時のバリデーションルールを返す。
+     *
+     * @return array<string, mixed> バリデーションルール
+     */
     public function rules(): array
     {
         return [

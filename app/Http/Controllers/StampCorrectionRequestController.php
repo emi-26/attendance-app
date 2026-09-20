@@ -10,6 +10,12 @@ use Illuminate\View\View;
 
 class StampCorrectionRequestController extends Controller
 {
+    /**
+     * 一般ユーザーの申請一覧を表示する。
+     *
+     * @param  Request  $request  認証済みユーザーのリクエスト
+     * @return View 管理者または一般ユーザーの申請一覧画面
+     */
     public function index(Request $request): View
     {
         $user = $request->user();
@@ -48,6 +54,13 @@ class StampCorrectionRequestController extends Controller
         ]);
     }
 
+    /**
+     * 選択した申請に対応する勤怠詳細画面へ遷移する。
+     *
+     * @param  Request  $request  認証済みユーザーのリクエスト
+     * @param  Application  $application  対象の申請
+     * @return RedirectResponse 勤怠詳細画面へのリダイレクト
+     */
     public function show(
         Request $request,
         Application $application

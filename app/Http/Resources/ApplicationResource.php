@@ -7,6 +7,12 @@ use Illuminate\Http\Resources\Json\JsonResource;
 
 class ApplicationResource extends JsonResource
 {
+    /**
+     * 修正申請をAPIレスポンス用の配列に変換する。
+     *
+     * @param  Request  $request  APIリクエスト
+     * @return array<string, mixed> 修正申請データ
+     */
     public function toArray(Request $request): array
     {
         return [

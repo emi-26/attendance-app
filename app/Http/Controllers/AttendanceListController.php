@@ -9,6 +9,12 @@ use Illuminate\View\View;
 
 class AttendanceListController extends Controller
 {
+    /**
+     * 一般ユーザーの月別勤怠一覧を表示する。
+     *
+     * @param  Request  $request  リクエスト
+     * @return View 勤怠一覧画面
+     */
     public function index(Request $request): View
     {
         $date = $request->filled('date')
@@ -64,14 +70,25 @@ class AttendanceListController extends Controller
         ]);
     }
 
+    /**
+     * 休憩時間の合計を計算する。
+     *
+     * @param  AttendanceRecord  $record  勤怠記録
+     * @return string 休憩時間
+     */
     private function calculateBreakTime(
         AttendanceRecord $record
     ): string {
         $minutes = $record->breaks
-            ->filter(fn ($break) => $break->break_in && $break->break_out)
+            ->filter(
+                fn ($break) => $break->break_in &&
+                    $break->break_out
+            )
             ->sum(function ($break) {
                 return Carbon::parse($break->break_in)
-                    ->diffInMinutes(Carbon::parse($break->break_out));
+                    ->diffInMinutes(
+                        Carbon::parse($break->break_out)
+                    );
             });
 
         return $minutes > 0
@@ -79,6 +96,12 @@ class AttendanceListController extends Controller
             : '';
     }
 
+    /**
+     * 実労働時間を計算する。
+     *
+     * @param  AttendanceRecord  $record  勤怠記録
+     * @return string 実労働時間
+     */
     private function calculateWorkTime(
         AttendanceRecord $record
     ): string {
@@ -87,18 +110,33 @@ class AttendanceListController extends Controller
         }
 
         $workMinutes = Carbon::parse($record->clock_in)
-            ->diffInMinutes(Carbon::parse($record->clock_out));
+            ->diffInMinutes(
+                Carbon::parse($record->clock_out)
+            );
 
         $breakMinutes = $record->breaks
-            ->filter(fn ($break) => $break->break_in && $break->break_out)
+            ->filter(
+                fn ($break) => $break->break_in &&
+                    $break->break_out
+            )
             ->sum(function ($break) {
                 return Carbon::parse($break->break_in)
-                    ->diffInMinutes(Carbon::parse($break->break_out));
+                    ->diffInMinutes(
+                        Carbon::parse($break->break_out)
+                    );
             });
 
-        return $this->formatMinutes($workMinutes - $breakMinutes);
+        return $this->formatMinutes(
+            $workMinutes - $breakMinutes
+        );
     }
 
+    /**
+     * 分数を時刻形式へ変換する。
+     *
+     * @param  int  $minutes  分数
+     * @return string HH:MM:SS形式の時間
+     */
     private function formatMinutes(int $minutes): string
     {
         return sprintf(
@@ -108,6 +146,12 @@ class AttendanceListController extends Controller
         );
     }
 
+    /**
+     * 時刻を表示用に整形する。
+     *
+     * @param  string|null  $time  時刻
+     * @return string HH:MM形式の時刻
+     */
     private function formatTime(?string $time): string
     {
         return $time
