@@ -20,7 +20,7 @@ class AttendanceDetailController extends Controller
 
         if ($request->user()->admin_status) {
             return app(AdminAttendanceController::class)
-                ->show($attendanceRecord);
+                ->show($attendanceRecord->id);
         }
 
         $this->authorizeRecord($request, $attendanceRecord);
@@ -84,7 +84,7 @@ class AttendanceDetailController extends Controller
 
         if ($request->user()->admin_status) {
             return app(AdminAttendanceController::class)
-                ->update($request, $attendanceRecord);
+                ->update($request, $attendanceRecord->id);
         }
 
         $this->authorizeRecord($request, $attendanceRecord);
