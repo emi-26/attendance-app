@@ -14,8 +14,18 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Http\Controllers\AuthenticatedSessionController;
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', function (Request $request) {
+    $user = $request->user();
+
+    if ($user?->admin_status) {
+        return redirect('/admin/attendance/list');
+    }
+
+    if ($user) {
+        return redirect('/attendance');
+    }
+
+    return redirect('/login');
 });
 
 Route::middleware([
