@@ -135,7 +135,7 @@ Route::middleware([
 Route::middleware('guest')->group(function () {
     Route::get('/admin/login', [
         AdminAuthController::class,
-        'showLoginForm',
+        'create',
     ]);
 
     Route::post('/admin/login', [
